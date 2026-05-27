@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<Container version="2">
+    <Name>Hermes Agent + Whisper</Name>
+    <Repository>ghcr.io/lbouriez/hermes-agent-whisper:latest</Repository>
+    <Registry>https://github.com/lbouriez/Unraid-Templates/pkgs/container/hermes-agent-whisper</Registry>
+    <Support>https://github.com/lbouriez/Unraid-Templates/issues</Support>
+    <Project>https://hermes-agent.nousresearch.com/</Project>
+    <TemplateURL>https://raw.githubusercontent.com/lbouriez/Unraid-Templates/main/templates/hermes-agent-whisper.xml</TemplateURL>
+    <Icon>https://raw.githubusercontent.com/NousResearch/hermes-agent/main/assets/banner.png</Icon>
+    <Category>AI</Category>
+    <Network>docker</Network>
+    <WebUI>http://[IP]:[PORT:9119]</WebUI>
+    <MyIP/>
+    <Shell>bash</Shell>
+    <Privileged>false</Privileged>
+    <ExtraParams/>
+    <Requires>This template's WebUI is the Hermes Dashboard. To access the gateway, connect to port 8642 (running in API server mode). Make sure to use the other "Hermes" components from the same maintainer.</Requires>
+    <PostArgs>gateway run</PostArgs>
+    <Overview>
+Hermes Agent (+ faster-whisper) is the official Nous Research Hermes Agent extended with faster-whisper for local, GPU-accelerated speech-to-text.&#xD;
+
+This image is built from nousresearch/hermes-agent:latest with faster-whisper and its CUDA runtime wheels (nvidia-cudnn-cu12, nvidia-cublas-cu12) added on top.&#xD;
+No separate CUDA toolkit installation is required on the host — GPU acceleration works out of the box with the NVIDIA Unraid plugin.&#xD;
+
+It exposes the Dashboard WebUI on port 9119 and API access on port 8642.&#xD;
+A custom Docker network and a shared volume are used so the other Hermes templates can see this container.&#xD;
+
+Please see https://github.com/lbouriez/Unraid-Templates for deployment notes.&#xD;
+Refer to https://hermes-agent.nousresearch.com/docs/user-guide/docker for full Hermes configuration options.&#xD;
+
+WHISPER_MODEL controls the model size (tiny / base / small / medium / large-v3).&#xD;
+Larger models are slower to load but more accurate. Start with "small" unless you have ample VRAM.&#xD;
+
+If you encounter issues with this template (not the underlying application), please open an issue at https://github.com/lbouriez/Unraid-Templates/issues&#xD;
+    </Overview>
+    <Readme>https://hermes-agent.nousresearch.com/docs/user-guide/docker</Readme>
+    <Date>2026-05-27</Date>
+    <Changes>
+20260527: Initial release — hermes-agent + faster-whisper (GPU-accelerated STT).&#xD;
+    </Changes>
+    <CPUset/>
+    <DonateText/>
+    <DonateLink/>
+
+    <!-- Ports -->
+    <Config Name="Gateway Port" Target="8642" Default="8642" Mode="tcp" Description="Internal port for the Hermes Gateway and API server" Type="Port" Display="always" Required="true" Mask="false">8642</Config>
+    <Config Name="Dashboard Port" Target="9119" Default="9119" Mode="tcp" Description="Internal port for the Hermes Dashboard" Type="Port" Display="always" Required="true" Mask="false">9119</Config>
+
+    <!-- API server -->
+    <Config Name="API_SERVER_ENABLED" Target="API_SERVER_ENABLED" Default="true" Mode="" Description="Enable the API server" Type="Variable" Display="always" Required="true" Mask="false">true</Config>
+    <Config Name="API_SERVER_HOST" Target="API_SERVER_HOST" Default="0.0.0.0" Mode="" Description="Bind Host for the API server" Type="Variable" Display="always" Required="true" Mask="false">0.0.0.0</Config>
+    <Config Name="API_SERVER_KEY" Target="API_SERVER_KEY" Default="" Mode="" Description="API key for the API server. Generate one with: openssl rand -hex 32" Type="Variable" Display="always" Required="true" Mask="true"></Config>
+    <Config Name="API_SERVER_CORS_ORIGINS" Target="API_SERVER_CORS_ORIGINS" Default="*" Mode="" Description="CORS origins for the API server" Type="Variable" Display="always" Required="true" Mask="false">*</Config>
+
+    <!-- Dashboard -->
+    <Config Name="HERMES_DASHBOARD" Target="HERMES_DASHBOARD" Default="true" Mode="" Description="Enable the Hermes Dashboard" Type="Variable" Display="always" Required="true" Mask="false">true</Config>
+    <Config Name="HERMES_DASHBOARD_HOST" Target="HERMES_DASHBOARD_HOST" Default="0.0.0.0" Mode="" Description="Bind Host for the Hermes Dashboard" Type="Variable" Display="always" Required="true" Mask="false">0.0.0.0</Config>
+    <Config Name="HERMES_DASHBOARD_TUI" Target="HERMES_DASHBOARD_TUI" Default="1" Mode="" Description="Set to 1 to expose the in-browser Chat tab" Type="Variable" Display="always" Required="true" Mask="false">1</Config>
+
+    <!-- User / group -->
+    <Config Name="HERMES_UID" Target="HERMES_UID" Default="99" Mode="" Description="UID to use for content" Type="Variable" Display="always" Required="true" Mask="false">99</Config>
+    <Config Name="HERMES_GID" Target="HERMES_GID" Default="100" Mode="" Description="GID to use for content" Type="Variable" Display="always" Required="true" Mask="false">100</Config>
+
+    <!-- Paths -->
+    <Config Name="HERMES_HOME" Target="HERMES_HOME" Default="/home/hermes/.hermes" Mode="" Description="Home directory for Hermes data" Type="Variable" Display="always" Required="true" Mask="false">/home/hermes/.hermes</Config>
+    <Config Name="HERMES_HOME Unraid location" Target="/home/hermes/.hermes" Default="/mnt/user/appdata/hermes-agent-whisper/hermes-home" Mode="rw" Description="Location where the container stores all user data (config, API keys, sessions, skills, memories)" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/hermes-agent-whisper/hermes-home</Config>
+    <Config Name="Hermes Shared Source Volume" Target="/opt/hermes" Default="hermes_shared_volume" Mode="rw" Description="A Docker named volume (do not change: using a folder path will not work) that auto-populates from the image (target must be the same for all hermes templates)" Type="Path" Display="advanced" Required="true" Mask="false">hermes_shared_volume</Config>
+
+    <!-- Whisper -->
+    <Config Name="WHISPER_MODEL" Target="WHISPER_MODEL" Default="small" Mode="" Description="faster-whisper model size: tiny / base / small / medium / large-v3. Larger = more accurate but more VRAM. Models are downloaded on first use to WHISPER_CACHE." Type="Variable" Display="always" Required="false" Mask="false">small</Config>
+    <Config Name="WHISPER_DEVICE" Target="WHISPER_DEVICE" Default="cuda" Mode="" Description="Inference device: cuda (NVIDIA GPU) or cpu. Use cpu if no NVIDIA GPU is available." Type="Variable" Display="always" Required="false" Mask="false">cuda</Config>
+    <Config Name="WHISPER_COMPUTE_TYPE" Target="WHISPER_COMPUTE_TYPE" Default="float16" Mode="" Description="CTranslate2 compute type: float16 (GPU, faster) or int8 (CPU/low-VRAM, smaller). Use int8_float16 for mixed precision." Type="Variable" Display="always" Required="false" Mask="false">float16</Config>
+    <Config Name="WHISPER_CACHE" Target="/home/hermes/.cache/whisper" Default="/mnt/user/appdata/hermes-agent-whisper/whisper-cache" Mode="rw" Description="Path where faster-whisper model weights are stored. Persisting this avoids re-downloading the model on every container restart." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/hermes-agent-whisper/whisper-cache</Config>
+</Container>
