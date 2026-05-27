@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - "docker/hermes-agent-whisper/**"
+      - "docker/hermes-agent/**"
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/hermes-agent-whisper
+  IMAGE_NAME: ${{ github.repository_owner }}/hermes-agent
 
 jobs:
   build-push:
@@ -33,7 +33,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: docker/hermes-agent-whisper
+          context: docker/hermes-agent
           push: true
           tags: |
             ghcr.io/${{ env.IMAGE_NAME }}:latest

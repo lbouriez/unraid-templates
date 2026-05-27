@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <Container version="2">
     <Name>Hermes Agent + Whisper</Name>
-    <Repository>ghcr.io/lbouriez/hermes-agent-whisper:latest</Repository>
-    <Registry>https://github.com/lbouriez/Unraid-Templates/pkgs/container/hermes-agent-whisper</Registry>
+    <Repository>ghcr.io/lbouriez/hermes-agent:latest</Repository>
+    <Registry>https://github.com/lbouriez/Unraid-Templates/pkgs/container/hermes-agent</Registry>
     <Support>https://github.com/lbouriez/Unraid-Templates/issues</Support>
     <Project>https://hermes-agent.nousresearch.com/</Project>
     <TemplateURL>https://raw.githubusercontent.com/lbouriez/Unraid-Templates/main/templates/hermes-agent-whisper.xml</TemplateURL>
@@ -51,6 +51,9 @@ If you encounter issues with this template (not the underlying application), ple
     <Config Name="API_SERVER_HOST" Target="API_SERVER_HOST" Default="0.0.0.0" Mode="" Description="Bind Host for the API server" Type="Variable" Display="always" Required="true" Mask="false">0.0.0.0</Config>
     <Config Name="API_SERVER_KEY" Target="API_SERVER_KEY" Default="" Mode="" Description="API key for the API server. Generate one with: openssl rand -hex 32" Type="Variable" Display="always" Required="true" Mask="true"></Config>
     <Config Name="API_SERVER_CORS_ORIGINS" Target="API_SERVER_CORS_ORIGINS" Default="*" Mode="" Description="CORS origins for the API server" Type="Variable" Display="always" Required="true" Mask="false">*</Config>
+
+    <!-- OpenRouter -->
+    <Config Name="OPENROUTER_API_KEY" Target="OPENROUTER_API_KEY" Default="" Mode="" Description="Your OpenRouter API key (https://openrouter.ai/keys). Gives Hermes access to 300+ models via the OpenRouter gateway." Type="Variable" Display="always" Required="false" Mask="true"></Config>
 
     <!-- Dashboard -->
     <Config Name="HERMES_DASHBOARD" Target="HERMES_DASHBOARD" Default="true" Mode="" Description="Enable the Hermes Dashboard" Type="Variable" Display="always" Required="true" Mask="false">true</Config>
