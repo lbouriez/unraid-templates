@@ -4,10 +4,11 @@ FROM nousresearch/hermes-agent:latest
 USER root
 
 # Install faster-whisper into the existing hermes venv.
+# The base image uses uv (not plain pip) — we target the venv via VIRTUAL_ENV.
 # nvidia-cudnn-cu12 and nvidia-cublas-cu12 provide GPU-accelerated inference
 # on NVIDIA cards via CTranslate2 (no separate CUDA toolkit required on the host).
 # Remove the nvidia-* packages if you only need CPU inference.
-RUN /opt/hermes/.venv/bin/pip install --no-cache-dir \
+RUN VIRTUAL_ENV=/opt/hermes/.venv uv pip install --no-cache-dir \
     faster-whisper \
     nvidia-cudnn-cu12 \
     nvidia-cublas-cu12 && \
