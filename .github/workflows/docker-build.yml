@@ -1,4 +1,4 @@
-name: Build & Push hermes-agent-whisper
+name: Build & Push hermes-agent
 
 on:
   push:

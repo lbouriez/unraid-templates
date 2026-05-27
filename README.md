@@ -6,7 +6,7 @@ Personal Unraid Community Applications templates.
 
 | Template | Description |
 |---|---|
-| [Hermes Agent + Whisper](templates/hermes-agent-whisper.xml) | [Hermes Agent](https://hermes-agent.nousresearch.com/) extended with [faster-whisper](https://github.com/SYSTRAN/faster-whisper) for local GPU-accelerated STT |
+| [Hermes Agent + Whisper](templates/hermes-agent.xml) | [Hermes Agent](https://hermes-agent.nousresearch.com/) extended with [faster-whisper](https://github.com/SYSTRAN/faster-whisper) for local GPU-accelerated STT |
 
 ## Adding to Unraid Community Applications
 
@@ -22,7 +22,7 @@ Custom images live under `docker/` and are built automatically via GitHub Action
 
 | Image | Base | Additions |
 |---|---|---|
-| `ghcr.io/lbouriez/hermes-agent-whisper` | `nousresearch/hermes-agent:latest` | `faster-whisper`, `nvidia-cudnn-cu12`, `nvidia-cublas-cu12` |
+| `ghcr.io/lbouriez/hermes-agent` | `nousresearch/hermes-agent:latest` | `faster-whisper`, `nvidia-cudnn-cu12`, `nvidia-cublas-cu12` |
 
 ## License
 
