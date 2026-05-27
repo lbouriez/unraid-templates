@@ -1,0 +1,60 @@
+name: Check upstream hermes-agent
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Every Monday at 06:00 UTC
+  workflow_dispatch:        # Allow manual trigger
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch upstream digest from Docker Hub
+        id: upstream
+        run: |
+          TOKEN=$(curl -sf "https://auth.docker.io/token?service=registry.docker.io&scope=repository:nousresearch/hermes-agent:pull" | jq -r .token)
+          DIGEST=$(curl -sf \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+            https://registry-1.docker.io/v2/nousresearch/hermes-agent/manifests/latest \
+            | jq -r '.config.digest')
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+          echo "Upstream digest: $DIGEST"
+
+      - name: Read stored digest
+        id: stored
+        run: |
+          FILE=".github/upstream-digest.txt"
+          if [ -f "$FILE" ]; then
+            STORED=$(cat "$FILE")
+          else
+            STORED=""
+          fi
+          echo "digest=$STORED" >> "$GITHUB_OUTPUT"
+          echo "Stored digest:   $STORED"
+
+      - name: No change detected
+        if: steps.upstream.outputs.digest == steps.stored.outputs.digest
+        run: echo "✅ Upstream image unchanged — no rebuild needed."
+
+      - name: Update stored digest and trigger build
+        if: steps.upstream.outputs.digest != steps.stored.outputs.digest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔄 Upstream image changed — triggering rebuild."
+          echo "${{ steps.upstream.outputs.digest }}" > .github/upstream-digest.txt
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/upstream-digest.txt
+          git commit -m "chore: upstream hermes-agent digest updated
+
+          New digest: ${{ steps.upstream.outputs.digest }}"
+          git push
+          gh workflow run docker-build.yml --ref master
