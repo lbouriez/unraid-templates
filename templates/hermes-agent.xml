@@ -34,9 +34,10 @@ Larger models are slower to load but more accurate. Start with "small" unless yo
 If you encounter issues with this template (not the underlying application), please open an issue at https://github.com/lbouriez/Unraid-Templates/issues&#xD;
     </Overview>
     <Readme>https://hermes-agent.nousresearch.com/docs/user-guide/docker</Readme>
-    <Date>2026-05-27</Date>
+    <Date>2026-05-31</Date>
     <Changes>
-20260527: Initial release — hermes-agent + faster-whisper (GPU-accelerated STT).&#xD;
+20260531: Add HOME variable so voice_stack plugin writes cache to the mounted data volume instead of /root.&#xD;
+20260527: Initial release -- hermes-agent + faster-whisper (GPU-accelerated STT).&#xD;
     </Changes>
     <CPUset/>
     <DonateText/>
@@ -63,6 +64,9 @@ If you encounter issues with this template (not the underlying application), ple
     <!-- User / group -->
     <Config Name="HERMES_UID" Target="HERMES_UID" Default="99" Mode="" Description="UID to use for content" Type="Variable" Display="always" Required="true" Mask="false">99</Config>
     <Config Name="HERMES_GID" Target="HERMES_GID" Default="100" Mode="" Description="GID to use for content" Type="Variable" Display="always" Required="true" Mask="false">100</Config>
+
+    <!-- System -->
+    <Config Name="HOME" Target="HOME" Default="/home/hermes" Mode="" Description="Sets the Unix HOME directory for the Hermes process. Required so Python-based plugins (e.g. voice_stack) write cache files to the mounted data volume instead of /root." Type="Variable" Display="advanced" Required="false" Mask="false">/home/hermes</Config>
 
     <!-- Paths -->
     <Config Name="HERMES_HOME" Target="HERMES_HOME" Default="/home/hermes/.hermes" Mode="" Description="Home directory for Hermes data" Type="Variable" Display="always" Required="true" Mask="false">/home/hermes/.hermes</Config>
