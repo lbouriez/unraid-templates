@@ -34,8 +34,9 @@ Larger models are slower to load but more accurate. Start with "small" unless yo
 If you encounter issues with this template (not the underlying application), please open an issue at https://github.com/lbouriez/Unraid-Templates/issues&#xD;
     </Overview>
     <Readme>https://hermes-agent.nousresearch.com/docs/user-guide/docker</Readme>
-    <Date>2026-05-31</Date>
+    <Date>2026-06-17</Date>
     <Changes>
+20260617: Add HERMES_DASHBOARD_INSECURE workaround for missing dashboard_auth module in v0.15.x (upstream fix in NousResearch/hermes-agent#34811).&#xD;
 20260531: Revert HOME variable addition.&#xD;
 20260527: Initial release -- hermes-agent + faster-whisper (GPU-accelerated STT).&#xD;
     </Changes>
@@ -60,6 +61,7 @@ If you encounter issues with this template (not the underlying application), ple
     <Config Name="HERMES_DASHBOARD" Target="HERMES_DASHBOARD" Default="true" Mode="" Description="Enable the Hermes Dashboard" Type="Variable" Display="always" Required="true" Mask="false">true</Config>
     <Config Name="HERMES_DASHBOARD_HOST" Target="HERMES_DASHBOARD_HOST" Default="0.0.0.0" Mode="" Description="Bind Host for the Hermes Dashboard" Type="Variable" Display="always" Required="true" Mask="false">0.0.0.0</Config>
     <Config Name="HERMES_DASHBOARD_TUI" Target="HERMES_DASHBOARD_TUI" Default="1" Mode="" Description="Set to 1 to expose the in-browser Chat tab" Type="Variable" Display="always" Required="true" Mask="false">1</Config>
+    <Config Name="HERMES_DASHBOARD_INSECURE" Target="HERMES_DASHBOARD_INSECURE" Default="1" Mode="" Description="Bypass the OAuth auth gate (safe on a trusted/local network). Required workaround until upstream fixes the missing dashboard_auth module (NousResearch/hermes-agent#34811)." Type="Variable" Display="always" Required="false" Mask="false">1</Config>
 
     <!-- User / group -->
     <Config Name="HERMES_UID" Target="HERMES_UID" Default="99" Mode="" Description="UID to use for content" Type="Variable" Display="always" Required="true" Mask="false">99</Config>
