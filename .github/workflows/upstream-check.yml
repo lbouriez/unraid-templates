@@ -19,11 +19,13 @@ jobs:
         id: upstream
         run: |
           TOKEN=$(curl -sf "https://auth.docker.io/token?service=registry.docker.io&scope=repository:nousresearch/hermes-agent:pull" | jq -r .token)
-          DIGEST=$(curl -sf \
+          DIGEST=$(curl -sI \
             -H "Authorization: Bearer $TOKEN" \
-            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+            -H "Accept: application/vnd.docker.distribution.manifest.list.v2+json,application/vnd.docker.distribution.manifest.v2+json" \
             https://registry-1.docker.io/v2/nousresearch/hermes-agent/manifests/latest \
-            | jq -r '.config.digest')
+            | grep -i "^docker-content-digest:" \
+            | tr -d '\r' \
+            | awk '{print $2}')
           echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
           echo "Upstream digest: $DIGEST"
 
