@@ -1,0 +1,43 @@
+#!/command/with-contenv sh
+# shellcheck shell=sh
+# Dashboard service. Always declared so s6 has a supervised slot; if
+# HERMES_DASHBOARD isn't truthy the run script exits cleanly and the
+# companion finish script returns 125 (s6's "permanent failure, do
+# not restart" marker), so s6-svstat reports the slot as down.
+#
+# Overridden from the upstream image to honour HERMES_DASHBOARD_INSECURE=1
+# by passing --insecure to the hermes dashboard CLI. The upstream env-var
+# handler was intentionally gutted in the June 2026 hardening but the CLI
+# flag itself still works — and the bundled auth-provider plugins
+# (dashboard_auth/nous, dashboard_auth/basic) are not yet shipped in the
+# upstream wheel, leaving no other way to start the dashboard on a non-loopback
+# bind. Remove this override once upstream ships the provider plugins.
+
+case "${HERMES_DASHBOARD:-}" in
+    1|true|TRUE|True|yes|YES|Yes) ;;
+    *)
+        exit 0
+        ;;
+esac
+
+export HOME=/opt/data
+cd /opt/data
+# shellcheck disable=SC1091
+. /opt/hermes/.venv/bin/activate
+
+dash_host="${HERMES_DASHBOARD_HOST:-0.0.0.0}"
+dash_port="${HERMES_DASHBOARD_PORT:-9119}"
+
+insecure_flag=""
+case "${HERMES_DASHBOARD_INSECURE:-}" in
+    1|true|TRUE|True|yes|YES|Yes)
+        echo "[dashboard] HERMES_DASHBOARD_INSECURE=1: passing --insecure to bypass the auth gate." >&2
+        echo "[dashboard] WARNING: dashboard is unauthenticated — use only on a trusted/local network." >&2
+        insecure_flag="--insecure"
+        ;;
+esac
+
+[ "$(id -u)" = 0 ] || exec hermes dashboard \
+    --host "$dash_host" --port "$dash_port" --no-open $insecure_flag
+exec s6-setuidgid hermes hermes dashboard \
+    --host "$dash_host" --port "$dash_port" --no-open $insecure_flag
