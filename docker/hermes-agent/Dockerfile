@@ -19,6 +19,9 @@ RUN uv pip install --no-cache-dir \
     nvidia-cublas-cu12 && \
     chown -R hermes:hermes /opt/hermes/.venv
 
+COPY dashboard-run /etc/s6-overlay/s6-rc.d/dashboard/run
+RUN chmod 755 /etc/s6-overlay/s6-rc.d/dashboard/run
+
 # Bundle the Spotify/Tailscale auth patch script (see spotify-tailscale-auth.md).
 # Placed outside volume-mount paths so it is always present after container start.
 COPY fix_spotify_auth.py /opt/fix_spotify_auth.py
