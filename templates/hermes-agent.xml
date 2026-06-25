@@ -36,7 +36,6 @@ If you encounter issues with this template (not the underlying application), ple
     <Readme>https://hermes-agent.nousresearch.com/docs/user-guide/docker</Readme>
     <Date>2026-06-25</Date>
     <Changes>
-20260625: Override s6 dashboard/run script to honour HERMES_DASHBOARD_INSECURE=1 via --insecure CLI flag. Upstream env-var was gutted in June 2026 hardening but provider plugins (dashboard_auth/nous, dashboard_auth/basic) are not yet shipped in the upstream wheel — this is the only working workaround until upstream fixes the packaging.&#xD;
 20260625: Remove deprecated HERMES_DASHBOARD_INSECURE (no-op since June 2026 hardening); replace with HERMES_DASHBOARD_BASIC_AUTH_* variables for proper auth gate configuration.&#xD;
 20260617: Add HERMES_DASHBOARD_INSECURE workaround for missing dashboard_auth module in v0.15.x (upstream fix in NousResearch/hermes-agent#34811).&#xD;
 20260531: Revert HOME variable addition.&#xD;
@@ -63,7 +62,6 @@ If you encounter issues with this template (not the underlying application), ple
     <Config Name="HERMES_DASHBOARD" Target="HERMES_DASHBOARD" Default="true" Mode="" Description="Enable the Hermes Dashboard" Type="Variable" Display="always" Required="true" Mask="false">true</Config>
     <Config Name="HERMES_DASHBOARD_HOST" Target="HERMES_DASHBOARD_HOST" Default="0.0.0.0" Mode="" Description="Bind Host for the Hermes Dashboard" Type="Variable" Display="always" Required="true" Mask="false">0.0.0.0</Config>
     <Config Name="HERMES_DASHBOARD_TUI" Target="HERMES_DASHBOARD_TUI" Default="1" Mode="" Description="Set to 1 to expose the in-browser Chat tab" Type="Variable" Display="always" Required="true" Mask="false">1</Config>
-    <Config Name="HERMES_DASHBOARD_INSECURE" Target="HERMES_DASHBOARD_INSECURE" Default="1" Mode="" Description="Set to 1 to bypass the auth gate via --insecure CLI flag. Safe on a trusted/local network. Workaround until upstream ships the missing dashboard_auth provider plugins." Type="Variable" Display="always" Required="false" Mask="false">1</Config>
     <Config Name="HERMES_DASHBOARD_BASIC_AUTH_USERNAME" Target="HERMES_DASHBOARD_BASIC_AUTH_USERNAME" Default="admin" Mode="" Description="Username for the dashboard basic-auth login page. Required (with PASSWORD and SECRET) to enable the built-in username/password auth provider." Type="Variable" Display="always" Required="true" Mask="false">admin</Config>
     <Config Name="HERMES_DASHBOARD_BASIC_AUTH_PASSWORD" Target="HERMES_DASHBOARD_BASIC_AUTH_PASSWORD" Default="" Mode="" Description="Password for the dashboard basic-auth login page." Type="Variable" Display="always" Required="true" Mask="true"></Config>
     <Config Name="HERMES_DASHBOARD_BASIC_AUTH_SECRET" Target="HERMES_DASHBOARD_BASIC_AUTH_SECRET" Default="7fa7949bb69b35279306c7102687d53b21c74eb04cc3b0a0347dc5c036572c03" Mode="" Description="Random secret used to sign session cookies (required for the auth provider to register). Generate a new one with: openssl rand -hex 32" Type="Variable" Display="always" Required="true" Mask="true">7fa7949bb69b35279306c7102687d53b21c74eb04cc3b0a0347dc5c036572c03</Config>
