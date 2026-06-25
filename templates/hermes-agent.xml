@@ -9,7 +9,7 @@
     <Icon>https://raw.githubusercontent.com/NousResearch/hermes-agent/main/assets/banner.png</Icon>
     <Category>AI</Category>
     <Network>docker</Network>
-    <WebUI>http://[IP]:[PORT:9119]</WebUI>
+    <WebUI>https://[NAME].ts.net:9119</WebUI>
     <MyIP/>
     <Shell>bash</Shell>
     <Privileged>false</Privileged>
@@ -36,6 +36,7 @@ If you encounter issues with this template (not the underlying application), ple
     <Readme>https://hermes-agent.nousresearch.com/docs/user-guide/docker</Readme>
     <Date>2026-06-25</Date>
     <Changes>
+20260625: Switch HERMES_DASHBOARD_HOST default to 127.0.0.1 — bypasses the auth gate (upstream dashboard_auth provider plugins not yet shipped). Use Tailscale serve to expose the dashboard securely on your tailnet (same pattern as Spotify auth). Basic-auth vars retained as advanced/future.&#xD;
 20260625: Remove deprecated HERMES_DASHBOARD_INSECURE (no-op since June 2026 hardening); replace with HERMES_DASHBOARD_BASIC_AUTH_* variables for proper auth gate configuration.&#xD;
 20260617: Add HERMES_DASHBOARD_INSECURE workaround for missing dashboard_auth module in v0.15.x (upstream fix in NousResearch/hermes-agent#34811).&#xD;
 20260531: Revert HOME variable addition.&#xD;
@@ -60,11 +61,11 @@ If you encounter issues with this template (not the underlying application), ple
 
     <!-- Dashboard -->
     <Config Name="HERMES_DASHBOARD" Target="HERMES_DASHBOARD" Default="true" Mode="" Description="Enable the Hermes Dashboard" Type="Variable" Display="always" Required="true" Mask="false">true</Config>
-    <Config Name="HERMES_DASHBOARD_HOST" Target="HERMES_DASHBOARD_HOST" Default="0.0.0.0" Mode="" Description="Bind Host for the Hermes Dashboard" Type="Variable" Display="always" Required="true" Mask="false">0.0.0.0</Config>
+    <Config Name="HERMES_DASHBOARD_HOST" Target="HERMES_DASHBOARD_HOST" Default="127.0.0.1" Mode="" Description="Bind address for the Hermes Dashboard. Set to 127.0.0.1 (loopback) to bypass the auth gate — use Tailscale serve to expose it securely on your tailnet. Set to 0.0.0.0 only if you configure a DashboardAuthProvider." Type="Variable" Display="always" Required="true" Mask="false">127.0.0.1</Config>
     <Config Name="HERMES_DASHBOARD_TUI" Target="HERMES_DASHBOARD_TUI" Default="1" Mode="" Description="Set to 1 to expose the in-browser Chat tab" Type="Variable" Display="always" Required="true" Mask="false">1</Config>
-    <Config Name="HERMES_DASHBOARD_BASIC_AUTH_USERNAME" Target="HERMES_DASHBOARD_BASIC_AUTH_USERNAME" Default="admin" Mode="" Description="Username for the dashboard basic-auth login page. Required (with PASSWORD and SECRET) to enable the built-in username/password auth provider." Type="Variable" Display="always" Required="true" Mask="false">admin</Config>
-    <Config Name="HERMES_DASHBOARD_BASIC_AUTH_PASSWORD" Target="HERMES_DASHBOARD_BASIC_AUTH_PASSWORD" Default="" Mode="" Description="Password for the dashboard basic-auth login page." Type="Variable" Display="always" Required="true" Mask="true"></Config>
-    <Config Name="HERMES_DASHBOARD_BASIC_AUTH_SECRET" Target="HERMES_DASHBOARD_BASIC_AUTH_SECRET" Default="7fa7949bb69b35279306c7102687d53b21c74eb04cc3b0a0347dc5c036572c03" Mode="" Description="Random secret used to sign session cookies (required for the auth provider to register). Generate a new one with: openssl rand -hex 32" Type="Variable" Display="always" Required="true" Mask="true">7fa7949bb69b35279306c7102687d53b21c74eb04cc3b0a0347dc5c036572c03</Config>
+    <Config Name="HERMES_DASHBOARD_BASIC_AUTH_USERNAME" Target="HERMES_DASHBOARD_BASIC_AUTH_USERNAME" Default="admin" Mode="" Description="(Future) Username for dashboard basic-auth — only activates once upstream ships the dashboard_auth/basic provider plugin. Currently a no-op." Type="Variable" Display="advanced" Required="false" Mask="false">admin</Config>
+    <Config Name="HERMES_DASHBOARD_BASIC_AUTH_PASSWORD" Target="HERMES_DASHBOARD_BASIC_AUTH_PASSWORD" Default="" Mode="" Description="(Future) Password for dashboard basic-auth." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+    <Config Name="HERMES_DASHBOARD_BASIC_AUTH_SECRET" Target="HERMES_DASHBOARD_BASIC_AUTH_SECRET" Default="7fa7949bb69b35279306c7102687d53b21c74eb04cc3b0a0347dc5c036572c03" Mode="" Description="(Future) Session cookie signing secret. Generate a new one with: openssl rand -hex 32" Type="Variable" Display="advanced" Required="false" Mask="true">7fa7949bb69b35279306c7102687d53b21c74eb04cc3b0a0347dc5c036572c03</Config>
 
     <!-- User / group -->
     <Config Name="HERMES_UID" Target="HERMES_UID" Default="99" Mode="" Description="UID to use for content" Type="Variable" Display="always" Required="true" Mask="false">99</Config>

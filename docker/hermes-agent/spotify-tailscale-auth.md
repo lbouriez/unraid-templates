@@ -4,12 +4,35 @@
 
 Hermes runs in a Docker container with no direct HTTPS exposure.
 Tailscale provides a stable HTTPS hostname: `https://<your-machine>.ts.net`
-Tailscale terminates TLS and proxies to Hermes's local HTTP callback server on port 43827.
+Tailscale terminates TLS and proxies to Hermes's local HTTP servers.
 
 > **Custom image users:** `fix_spotify_auth.py` is pre-bundled at `/opt/fix_spotify_auth.py`
 > — no need to create it manually.
 
 ---
+
+## Dashboard via Tailscale
+
+The Hermes dashboard binds to `127.0.0.1` (loopback) by default — this bypasses the
+auth gate (upstream `dashboard_auth` provider plugins are not yet shipped). Use
+`tailscale serve` to expose it securely on your tailnet. Tailscale itself acts as the
+auth layer (tailnet membership required).
+
+In the Unraid Docker template, add a **Tailscale Serve** entry:
+
+| Field | Value |
+|---|---|
+| Tailscale Serve | `https://<your-machine>.ts.net:9119` |
+| Tailscale Serve Target | `http://localhost:9119` |
+
+Access the dashboard at `https://<your-machine>.ts.net:9119` from any device on your tailnet.
+
+> WebSocket (Chat/TUI tab) works through Tailscale serve — the dashboard sees the
+> connection as loopback, so no auth gate triggers.
+
+---
+
+## Spotify Auth via Tailscale
 
 ## One-Time Setup (do this after a fresh container or wipe)
 
