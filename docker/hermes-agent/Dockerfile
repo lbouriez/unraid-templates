@@ -25,3 +25,9 @@ RUN chmod 755 /etc/s6-overlay/s6-rc.d/dashboard/run
 # Bundle the Spotify/Tailscale auth patch script (see spotify-tailscale-auth.md).
 # Placed outside volume-mount paths so it is always present after container start.
 COPY fix_spotify_auth.py /opt/fix_spotify_auth.py
+
+# Bundle the OpenMemory memory provider plugin.
+# Allows Hermes to connect to the mem0-aio / OpenMemory server.
+COPY plugins/openmemory/ /opt/hermes/plugins/memory/openmemory/
+RUN chown -R hermes:hermes /opt/hermes/plugins/memory/openmemory/ && \
+    chmod -R 755 /opt/hermes/plugins/memory/openmemory/
