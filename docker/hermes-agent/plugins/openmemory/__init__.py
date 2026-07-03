@@ -40,7 +40,7 @@ def _load_config() -> dict:
     config = {
         "base_url": os.environ.get("OPENMEMORY_BASE_URL", "http://192.168.10.37:8765"),
         "user_id": os.environ.get("OPENMEMORY_USER_ID", "lbouriez"),
-        "app_name": os.environ.get("OPENMEMORY_APP_NAME", "Hermes"),
+        "app_name": os.environ.get("OPENMEMORY_APP_NAME", "Hermes-Agent"),
     }
 
     config_path = get_hermes_home() / "openmemory.json"
@@ -135,7 +135,7 @@ class OpenMemoryProvider(MemoryProvider):
         self._config = None
         self._base_url = ""
         self._user_id = "lbouriez"
-        self._app_name = "Hermes"
+        self._app_name = "Hermes-Agent"
         self._client: Optional[httpx.Client] = None
         self._client_lock = threading.Lock()
         self._prefetch_result = ""
@@ -162,7 +162,7 @@ class OpenMemoryProvider(MemoryProvider):
             {"key": "user_id", "description": "User identifier",
              "default": "lbouriez", "env_var": "OPENMEMORY_USER_ID"},
             {"key": "app_name", "description": "App name for metadata",
-             "default": "Hermes", "env_var": "OPENMEMORY_APP_NAME"},
+             "default": "Hermes-Agent", "env_var": "OPENMEMORY_APP_NAME"},
         ]
 
     def save_config(self, values, hermes_home):
@@ -181,7 +181,7 @@ class OpenMemoryProvider(MemoryProvider):
         self._config = _load_config()
         self._base_url = self._config.get("base_url", "http://192.168.10.37:8765").rstrip("/")
         self._user_id = kwargs.get("user_id") or self._config.get("user_id", "hermes-user")
-        self._app_name = self._config.get("app_name", "hermes")
+        self._app_name = self._config.get("app_name", "Hermes-Agent")
 
     def _get_client(self) -> httpx.Client:
         with self._client_lock:
