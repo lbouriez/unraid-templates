@@ -180,7 +180,9 @@ class OpenMemoryProvider(MemoryProvider):
     def initialize(self, session_id: str, **kwargs) -> None:
         self._config = _load_config()
         self._base_url = self._config.get("base_url", "http://192.168.10.37:8765").rstrip("/")
-        self._user_id = kwargs.get("user_id") or self._config.get("user_id", "hermes-user")
+        # Always use the configured user_id (env / openmemory.json).
+        # Ignore kwargs["user_id"] which is the platform user ID (Telegram/Discord).
+        self._user_id = self._config.get("user_id", "lbouriez")
         self._app_name = self._config.get("app_name", "Hermes-Agent")
 
     def _get_client(self) -> httpx.Client:
