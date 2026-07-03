@@ -39,7 +39,7 @@ def _load_config() -> dict:
 
     config = {
         "base_url": os.environ.get("OPENMEMORY_BASE_URL", "http://192.168.10.37:8765"),
-        "user_id": os.environ.get("OPENMEMORY_USER_ID", "hermes-user"),
+        "user_id": os.environ.get("OPENMEMORY_USER_ID", "lbouriez"),
         "app_name": os.environ.get("OPENMEMORY_APP_NAME", "Hermes"),
     }
 
@@ -134,7 +134,7 @@ class OpenMemoryProvider(MemoryProvider):
     def __init__(self):
         self._config = None
         self._base_url = ""
-        self._user_id = "hermes-user"
+        self._user_id = "lbouriez"
         self._app_name = "Hermes"
         self._client: Optional[httpx.Client] = None
         self._client_lock = threading.Lock()
@@ -160,7 +160,7 @@ class OpenMemoryProvider(MemoryProvider):
             {"key": "base_url", "description": "OpenMemory API base URL",
              "default": "http://192.168.10.37:8765", "env_var": "OPENMEMORY_BASE_URL"},
             {"key": "user_id", "description": "User identifier",
-             "default": "hermes-user", "env_var": "OPENMEMORY_USER_ID"},
+             "default": "lbouriez", "env_var": "OPENMEMORY_USER_ID"},
             {"key": "app_name", "description": "App name for metadata",
              "default": "Hermes", "env_var": "OPENMEMORY_APP_NAME"},
         ]
