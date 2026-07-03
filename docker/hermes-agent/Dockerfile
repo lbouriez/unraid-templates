@@ -28,6 +28,19 @@ COPY fix_spotify_auth.py /opt/fix_spotify_auth.py
 
 # Bundle the OpenMemory memory provider plugin.
 # Allows Hermes to connect to the mem0-aio / OpenMemory server.
-COPY plugins/openmemory/ /opt/hermes/plugins/memory/openmemory/
-RUN chown -R hermes:hermes /opt/hermes/plugins/memory/openmemory/ && \
-    chmod -R 755 /opt/hermes/plugins/memory/openmemory/
+# Copied to /opt/hermes-builtin/ (NOT under /opt/hermes/ which is a Docker volume)
+# because volumes shadow image files. An s6 oneshot service copies it into
+# the volume at container startup.
+COPY plugins/openmemory/ /opt/hermes-builtin/plugins/memory/openmemory/
+RUN chown -R hermes:hermes /opt/hermes-builtin/plugins/memory/openmemory/ && \
+    chmod -R 755 /opt/hermes-builtin/plugins/memory/openmemory/
+
+# S6 oneshot: copies bundled plugins into the volume-mounted /opt/hermes/plugins/ at startup.
+COPY s6-rc.d/copy-openmemory-plugins/ /etc/s6-overlay/s6-rc.d/copy-openmemory-plugins/
+RUN chmod -R 755 /etc/s6-overlay/s6-rc.d/copy-openmemory-plugins/ && \
+    chmod 644 /etc/s6-overlay/s6-rc.d/copy-openmemory-plugins/type
+
+# Register as a dependency of main-hermes so it runs before Hermes starts
+RUN mkdir -p /etc/s6-overlay/s6-rc.d/main-hermes/dependencies.d && \
+    ln -sf /etc/s6-overlay/s6-rc.d/copy-openmemory-plugins /etc/s6-overlay/s6-rc.d/main-hermes/dependencies.d/copy-openmemory-plugins && \
+    chmod 755 /etc/s6-overlay/s6-rc.d/main-hermes/dependencies.d/copy-openmemory-plugins
