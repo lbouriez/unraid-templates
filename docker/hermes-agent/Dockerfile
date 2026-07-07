@@ -7,6 +7,7 @@ USER root
 # and docker exec sessions — no need to run `source .venv/bin/activate` manually.
 ENV VIRTUAL_ENV=/opt/hermes/.venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/hermes/.playwright
 
 # Install faster-whisper into the existing hermes venv.
 # The base image uses uv (not plain pip) — we target the venv via VIRTUAL_ENV.
@@ -16,8 +17,12 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN uv pip install --no-cache-dir \
     faster-whisper \
     nvidia-cudnn-cu12 \
-    nvidia-cublas-cu12 && \
-    chown -R hermes:hermes /opt/hermes/.venv
+    nvidia-cublas-cu12 \
+    playwright && \
+    chown -R hermes:hermes /opt/hermes/.venv && \
+    mkdir -p /opt/hermes/.playwright && \
+    python3 -m playwright install chromium && \
+    chown -R hermes:hermes /opt/hermes/.playwright
 
 COPY dashboard-run /etc/s6-overlay/s6-rc.d/dashboard/run
 RUN chmod 755 /etc/s6-overlay/s6-rc.d/dashboard/run

@@ -15,6 +15,15 @@ This image extends [`nousresearch/hermes-agent:latest`](https://hub.docker.com/r
 | `faster-whisper` | Core STT library |
 | `nvidia-cudnn-cu12` | cuDNN runtime for CUDA 12 (GPU inference) |
 | `nvidia-cublas-cu12` | cuBLAS runtime for CUDA 12 (GPU inference) |
+| `playwright` | Browser automation for Fintel short-data scraping in squeeze scanner |
+
+**Environment variables added:**
+
+| Variable | Default | Description |
+|---|---|---|
+| `PLAYWRIGHT_BROWSERS_PATH` | `/opt/hermes/.playwright` | Chromium browser binaries location |
+
+Chromium is installed at build time under `PLAYWRIGHT_BROWSERS_PATH` (inside the image). The squeeze scanner's `squeeze_alert.sh` reads this env var to find the browser for Fintel short-borrow data.
 
 **Unraid template variables:**
 
