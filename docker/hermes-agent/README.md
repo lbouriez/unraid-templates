@@ -2,28 +2,28 @@
 
 This image extends [`nousresearch/hermes-agent:latest`](https://hub.docker.com/r/nousresearch/hermes-agent) with additional capabilities.
 
-## Additions
+## Overview of additions
 
-### faster-whisper — local speech-to-text
+| Addition | Category | Bundled in image |
+|---|---|---|
+| faster-whisper | Speech-to-text (local STT) | ✅ Python package |
+| Playwright + Chromium | Browser automation (Fintel scraping) | ✅ Python package + binaries |
+| Spotify Tailscale auth patch | Auth fix for Docker | ✅ Script |
+| OpenMemory plugin | Memory provider backend | ✅ Plugin files |
+
+---
+
+## 1. faster-whisper — local speech-to-text
 
 [faster-whisper](https://github.com/SYSTRAN/faster-whisper) is a reimplementation of OpenAI Whisper using [CTranslate2](https://github.com/OpenNMT/CTranslate2), providing significantly faster inference with lower memory usage.
 
-**Packages added to the hermes venv:**
+**Python packages added:**
 
 | Package | Purpose |
 |---|---|
 | `faster-whisper` | Core STT library |
 | `nvidia-cudnn-cu12` | cuDNN runtime for CUDA 12 (GPU inference) |
 | `nvidia-cublas-cu12` | cuBLAS runtime for CUDA 12 (GPU inference) |
-| `playwright` | Browser automation for Fintel short-data scraping in squeeze scanner |
-
-**Environment variables added:**
-
-| Variable | Default | Description |
-|---|---|---|
-| `PLAYWRIGHT_BROWSERS_PATH` | `/opt/hermes/.playwright` | Chromium browser binaries location |
-
-Chromium is installed at build time under `PLAYWRIGHT_BROWSERS_PATH` (inside the image). The squeeze scanner's `squeeze_alert.sh` reads this env var to find the browser for Fintel short-borrow data.
 
 **Unraid template variables:**
 
@@ -37,11 +37,29 @@ Chromium is installed at build time under `PLAYWRIGHT_BROWSERS_PATH` (inside the
 
 ---
 
-### Spotify auth via Tailscale
+## 2. Playwright + Chromium — browser automation
 
-Hermes's built-in Spotify PKCE flow only accepts `http://localhost` redirect URIs, which
-doesn't work inside Docker without HTTPS. This image bundles a patch script that lifts that
-restriction so you can use a Tailscale HTTPS hostname as the redirect URI.
+Used by the **squeeze scanner** (ticker-lab repo) to scrape Fintel short-borrow data (shares available, borrow fee rates, short volume ratio).
+
+**Python packages added:**
+
+| Package | Purpose |
+|---|---|
+| `playwright` | Headless browser automation |
+
+**Environment variables:**
+
+| Variable | Value | Description |
+|---|---|---|
+| `PLAYWRIGHT_BROWSERS_PATH` | `/opt/hermes/.playwright` | Chromium binaries location (inside image) |
+
+Chromium is installed at build time — no runtime download needed. The squeeze scanner's `squeeze_alert.sh` reads `PLAYWRIGHT_BROWSERS_PATH` to find the browser.
+
+---
+
+## 3. Spotify auth via Tailscale
+
+Hermes's built-in Spotify PKCE flow only accepts `http://localhost` redirect URIs, which doesn't work inside Docker without HTTPS. This image bundles a patch script that lifts that restriction so you can use a Tailscale HTTPS hostname as the redirect URI.
 
 **Bundled file:** `/opt/fix_spotify_auth.py`
 
@@ -66,4 +84,16 @@ See the [full guide](./spotify-tailscale-auth.md) for Tailscale serve configurat
 
 ---
 
-*Add future capability additions to this README as new sections.*
+## 4. OpenMemory memory provider plugin
+
+Allows Hermes to connect to a self-hosted mem0-aio / OpenMemory server for persistent memory storage.
+
+**Plugin files:** `/opt/hermes-builtin/plugins/memory/openmemory/`
+
+An s6 oneshot service (`copy-openmemory-plugins`) copies the plugin into the volume-mounted `/opt/hermes/plugins/` at container startup, so it's available even though `/opt/hermes/` is a Docker volume.
+
+**Activation inside Hermes:**
+```bash
+hermes memory setup openmemory
+# or: hermes config set memory.provider openmemory
+```
