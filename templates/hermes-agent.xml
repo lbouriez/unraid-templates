@@ -34,8 +34,9 @@ Larger models are slower to load but more accurate. Start with "small" unless yo
 If you encounter issues with this template (not the underlying application), please open an issue at https://github.com/lbouriez/Unraid-Templates/issues&#xD;
     </Overview>
     <Readme>https://hermes-agent.nousresearch.com/docs/user-guide/docker</Readme>
-    <Date>2026-06-25</Date>
+    <Date>2026-08-04</Date>
     <Changes>
+20260804: Stop mounting a persistent volume over /opt/hermes. Upstream now treats it as an immutable install tree; stale volume contents could hide a new entrypoint and prevent startup. Persist Hermes state under /opt/data instead.&#xD;
 20260625: Switch HERMES_DASHBOARD_HOST default to 127.0.0.1 — bypasses the auth gate (upstream dashboard_auth provider plugins not yet shipped). Use Tailscale serve to expose the dashboard securely on your tailnet (same pattern as Spotify auth). Basic-auth vars retained as advanced/future.&#xD;
 20260625: Remove deprecated HERMES_DASHBOARD_INSECURE (no-op since June 2026 hardening); replace with HERMES_DASHBOARD_BASIC_AUTH_* variables for proper auth gate configuration.&#xD;
 20260617: Add HERMES_DASHBOARD_INSECURE workaround for missing dashboard_auth module in v0.15.x (upstream fix in NousResearch/hermes-agent#34811).&#xD;
@@ -73,13 +74,12 @@ If you encounter issues with this template (not the underlying application), ple
     <Config Name="HERMES_GID" Target="HERMES_GID" Default="100" Mode="" Description="GID to use for content" Type="Variable" Display="always" Required="true" Mask="false">100</Config>
 
     <!-- Paths -->
-    <Config Name="HERMES_HOME" Target="HERMES_HOME" Default="/home/hermes/.hermes" Mode="" Description="Home directory for Hermes data" Type="Variable" Display="always" Required="true" Mask="false">/home/hermes/.hermes</Config>
-    <Config Name="HERMES_HOME Unraid location" Target="/home/hermes/.hermes" Default="/mnt/user/appdata/hermes-agent/hermes-home" Mode="rw" Description="Location where the container stores all user data (config, API keys, sessions, skills, memories)" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/hermes-agent/hermes-home</Config>
-    <Config Name="Hermes Shared Source Volume" Target="/opt/hermes" Default="hermes_shared_volume" Mode="rw" Description="A Docker named volume (do not change: using a folder path will not work) that auto-populates from the image (target must be the same for all hermes templates)" Type="Path" Display="advanced" Required="true" Mask="false">hermes_shared_volume</Config>
+    <Config Name="HERMES_HOME" Target="HERMES_HOME" Default="/opt/data" Mode="" Description="Home directory for persistent Hermes data" Type="Variable" Display="always" Required="true" Mask="false">/opt/data</Config>
+    <Config Name="HERMES_HOME Unraid location" Target="/opt/data" Default="/mnt/user/appdata/hermes-agent/hermes-home" Mode="rw" Description="Location where the container stores all user data (config, API keys, sessions, skills, memories)" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/hermes-agent/hermes-home</Config>
 
     <!-- Whisper -->
     <Config Name="WHISPER_MODEL" Target="WHISPER_MODEL" Default="small" Mode="" Description="faster-whisper model size: tiny / base / small / medium / large-v3. Larger = more accurate but more VRAM. Models are downloaded on first use to WHISPER_CACHE." Type="Variable" Display="always" Required="false" Mask="false">small</Config>
     <Config Name="WHISPER_DEVICE" Target="WHISPER_DEVICE" Default="cuda" Mode="" Description="Inference device: cuda (NVIDIA GPU) or cpu. Use cpu if no NVIDIA GPU is available." Type="Variable" Display="always" Required="false" Mask="false">cuda</Config>
     <Config Name="WHISPER_COMPUTE_TYPE" Target="WHISPER_COMPUTE_TYPE" Default="float16" Mode="" Description="CTranslate2 compute type: float16 (GPU, faster) or int8 (CPU/low-VRAM, smaller). Use int8_float16 for mixed precision." Type="Variable" Display="always" Required="false" Mask="false">float16</Config>
-    <Config Name="WHISPER_CACHE" Target="/home/hermes/.cache/whisper" Default="/mnt/user/appdata/hermes-agent/whisper-cache" Mode="rw" Description="Path where faster-whisper model weights are stored. Persisting this avoids re-downloading the model on every container restart." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/hermes-agent/whisper-cache</Config>
+    <Config Name="WHISPER_CACHE" Target="/opt/data/.cache/whisper" Default="/mnt/user/appdata/hermes-agent/whisper-cache" Mode="rw" Description="Path where faster-whisper model weights are stored. Persisting this avoids re-downloading the model on every container restart." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/hermes-agent/whisper-cache</Config>
 </Container>
