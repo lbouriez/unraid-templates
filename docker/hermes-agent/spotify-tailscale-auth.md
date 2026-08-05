@@ -96,12 +96,12 @@ https://<your-machine>.ts.net (tailnet only)
 ### Step 3 — Set the redirect URI in .env
 
 ```bash
-sed -i 's|HERMES_SPOTIFY_REDIRECT_URI=.*|HERMES_SPOTIFY_REDIRECT_URI=https://<your-machine>.ts.net/spotify/callback|' /home/hermes/.hermes/.env
+sed -i 's|HERMES_SPOTIFY_REDIRECT_URI=.*|HERMES_SPOTIFY_REDIRECT_URI=https://<your-machine>.ts.net/spotify/callback|' /opt/data/.env
 ```
 
 Verify:
 ```bash
-grep SPOTIFY_REDIRECT /home/hermes/.hermes/.env
+grep SPOTIFY_REDIRECT /opt/data/.env
 ```
 
 Expected:
@@ -157,11 +157,11 @@ You should NOT need to re-auth Spotify unless tokens expired.
 > **Skip this if using the custom image** — the script is already at `/opt/fix_spotify_auth.py`.
 
 For the upstream `nousresearch/hermes-agent` image, save the contents of
-[`fix_spotify_auth.py`](./fix_spotify_auth.py) to `/home/hermes/.hermes/fix_spotify_auth.py`
+[`fix_spotify_auth.py`](./fix_spotify_auth.py) to `/opt/data/fix_spotify_auth.py`
 inside the container, then run it with:
 
 ```bash
-docker exec -u 0 hermes python3 /home/hermes/.hermes/fix_spotify_auth.py
+docker exec -u 0 hermes python3 /opt/data/fix_spotify_auth.py
 ```
 
 ---
@@ -171,9 +171,9 @@ docker exec -u 0 hermes python3 /home/hermes/.hermes/fix_spotify_auth.py
 | What | Command |
 |---|---|
 | Apply source patch (custom image) | `docker exec -u 0 hermes python3 /opt/fix_spotify_auth.py` |
-| Apply source patch (upstream image) | `docker exec -u 0 hermes python3 /home/hermes/.hermes/fix_spotify_auth.py` |
+| Apply source patch (upstream image) | `docker exec -u 0 hermes python3 /opt/data/fix_spotify_auth.py` |
 | Start Tailscale proxy | `tailscale serve --bg http://localhost:43827` |
 | Check Tailscale proxy | `tailscale serve status` |
-| Update redirect URI | `sed -i 's\|HERMES_SPOTIFY_REDIRECT_URI=.*\|HERMES_SPOTIFY_REDIRECT_URI=https://<your-machine>.ts.net/spotify/callback\|' /home/hermes/.hermes/.env` |
+| Update redirect URI | `sed -i 's\|HERMES_SPOTIFY_REDIRECT_URI=.*\|HERMES_SPOTIFY_REDIRECT_URI=https://<your-machine>.ts.net/spotify/callback\|' /opt/data/.env` |
 | Run auth | `hermes auth spotify` |
 | Spotify Dashboard | https://developer.spotify.com/dashboard |

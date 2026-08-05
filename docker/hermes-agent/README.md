@@ -74,7 +74,7 @@ docker exec -u 0 hermes python3 /opt/fix_spotify_auth.py
 # 2. Set the redirect URI (adjust hostname to match your Tailscale machine name)
 docker exec hermes sed -i \
   's|HERMES_SPOTIFY_REDIRECT_URI=.*|HERMES_SPOTIFY_REDIRECT_URI=https://<your-machine>.ts.net/spotify/callback|' \
-  /home/hermes/.hermes/.env
+  /opt/data/.env
 
 # 3. Authenticate
 docker exec -it hermes hermes auth spotify
@@ -88,9 +88,9 @@ See the [full guide](./spotify-tailscale-auth.md) for Tailscale serve configurat
 
 Allows Hermes to connect to a self-hosted mem0-aio / OpenMemory server for persistent memory storage.
 
-**Plugin files:** `/opt/hermes-builtin/plugins/memory/openmemory/`
+**Plugin files:** `/opt/hermes/plugins/memory/openmemory/`
 
-An s6 oneshot service (`copy-openmemory-plugins`) copies the plugin into the volume-mounted `/opt/hermes/plugins/` at container startup, so it's available even though `/opt/hermes/` is a Docker volume.
+The plugin is baked into the image's immutable `/opt/hermes` install tree. Persistent configuration and user data belong under `/opt/data`; do not mount a volume over `/opt/hermes`, because stale contents can hide files added by an image update.
 
 **Activation inside Hermes:**
 ```bash

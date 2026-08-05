@@ -46,10 +46,5 @@ COPY fix_spotify_auth.py /opt/fix_spotify_auth.py
 # ---------------------------------------------------------------------------
 # OpenMemory memory provider plugin
 # ---------------------------------------------------------------------------
-COPY plugins/openmemory/ /opt/hermes-builtin/plugins/memory/openmemory/
-RUN chown -R hermes:hermes /opt/hermes-builtin/plugins/memory/openmemory/ && chmod -R 755 /opt/hermes-builtin/plugins/memory/openmemory/
-
-COPY s6-rc.d/copy-openmemory-plugins/ /etc/s6-overlay/s6-rc.d/copy-openmemory-plugins/
-RUN chmod -R 755 /etc/s6-overlay/s6-rc.d/copy-openmemory-plugins/ && chmod 644 /etc/s6-overlay/s6-rc.d/copy-openmemory-plugins/type
-
-RUN mkdir -p /etc/s6-overlay/s6-rc.d/main-hermes/dependencies.d && ln -sf /etc/s6-overlay/s6-rc.d/copy-openmemory-plugins /etc/s6-overlay/s6-rc.d/main-hermes/dependencies.d/copy-openmemory-plugins && chmod 755 /etc/s6-overlay/s6-rc.d/main-hermes/dependencies.d/copy-openmemory-plugins
+COPY plugins/openmemory/ /opt/hermes/plugins/memory/openmemory/
+RUN chmod -R 755 /opt/hermes/plugins/memory/openmemory/
