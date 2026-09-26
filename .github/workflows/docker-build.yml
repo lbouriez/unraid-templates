@@ -2,11 +2,9 @@ name: Build & Push hermes-agent
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - "docker/hermes-agent/**"
-  schedule:
-    - cron: "0 4 * * 1"  # Every Monday at 04:00 UTC — keeps base image current
   workflow_dispatch:
 
 env:
@@ -40,5 +38,5 @@ jobs:
           pull: true
           tags: |
             ghcr.io/${{ env.IMAGE_NAME }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ env.IMAGE_NAME }}:latest
+          cache-to: type=inline
